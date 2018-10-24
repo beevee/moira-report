@@ -59,7 +59,7 @@ class Menu extends React.Component {
 }
 
 Menu.propTypes = {
-    channelName: PropTypes.string.isRequired,
+    channelName: PropTypes.string,
     history: PropTypes.object.isRequired,
     classes: PropTypes.object.isRequired,
 };

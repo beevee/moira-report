@@ -36,7 +36,7 @@ class App extends React.Component {
 
                 <Menu channelName={channelName}/>
 
-                <Report channelName={channelName}/>
+                {channelName && <Report channelName={channelName}/>}
             </div>
         )
     }

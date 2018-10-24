@@ -6,7 +6,7 @@ import App from "./App"
 
 ReactDom.render(
     <Router>
-        <Route path='/:channelName' component={App} />
+        <Route path='/:channelName?' component={App} />
     </Router>,
     document.getElementById('app')
   );

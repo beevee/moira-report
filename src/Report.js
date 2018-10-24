@@ -18,20 +18,28 @@ class Report extends React.Component {
     constructor() {
         super();
         this.state = {
-            stats: null
+            stats: {}
         }
     }
 
     componentDidMount() {
-        fetch(`//localhost:9090/${this.props.channelName}`)
+        const { channelName } = this.props;
+        if (this.state.stats[channelName] !== undefined) return;
+
+        fetch(`//localhost:9090/${channelName}`)
             .then(response => response.json())
-            .then(responseJson => {this.setState({stats: responseJson})
+            .then(responseJson => {this.setState({stats:{
+                ...this.state.stats,
+                [channelName]: responseJson
+            }})
             })
     }
 
+    componentDidUpdate = this.componentDidMount;
+
     render() {
-        const { stats } = this.state;
-        const { classes } = this.props;
+        const { classes, channelName } = this.props;
+        const stats = this.state.stats[channelName];
         const total = stats && stats.moira.total + stats.others.total;
 
         return (

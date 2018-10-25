@@ -43,7 +43,7 @@ app.get('/:channelName', (request, response) => {
     };
 
     for (let i=0; i<24; i++) {
-        stats.moira.byHour[i] = 0
+        stats.moira.byHour[i] = {}
     }
 
     web.conversations.list({ types: "public_channel,private_channel" })
@@ -57,7 +57,9 @@ app.get('/:channelName', (request, response) => {
             if (msg.bot_id === moiraBotId) {
                 stats.moira.total++;
                 const ts = moment(Math.floor(1000 * msg.ts));
-                stats.moira.byHour[ts.hours()] += 1;
+                stats.moira.byHour[ts.hours()][level] = stats.moira.byHour[ts.hours()][level] || 0;
+                stats.moira.byHour[ts.hours()][level] += 1;
+
                 if (!msg.reactions && !msg.replies) {
                     stats.moira.byReaction['nothing'] = stats.moira.byReaction['nothing'] || 0;
                     stats.moira.byReaction['nothing'] += 1;

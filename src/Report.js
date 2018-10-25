@@ -1,5 +1,6 @@
 import {Typography, Grid, Paper, withStyles} from "@material-ui/core";
 import HourlyGraph from "./graphs/Hourly";
+import ReactionsGraph from "./graphs/Reactions";
 import PropTypes from "prop-types";
 import React from "react";
 
@@ -57,10 +58,20 @@ class Report extends React.Component {
                         <Grid item xs={6}>
                             <Paper className={classes.paper}>
                                 <Typography paragraph>
-                                    Этот график показывает, сколько сообщений пришлось на каждый час. Время екатеринбургское.
+                                    Этот график показывает, сколько сообщений пришлось на каждый час. Время местное (там, где запущен moira-report).
                                     В идеальном чате нет сообщений ночью. От каждого такого сообщения просыпается дежурный.
                                 </Typography>
-                                <HourlyGraph data={convertHourlyStats(stats.moira.byHour)}/>
+                                <HourlyGraph data={stats.moira.byHour}/>
+                            </Paper>
+                        </Grid>
+
+                        <Grid item xs={6}>
+                            <Paper className={classes.paper}>
+                                <Typography paragraph>
+                                    Здесь учитывается реакция на сообщение. Это может быть ответ в тред, смайлик или отсутствие реакции (nothing).
+                                    Если в команде есть договоренности относительно правил реагирования на алерты, этот график поможет найти отклонения.
+                                </Typography>
+                                <ReactionsGraph data={stats.moira.byReaction}/>
                             </Paper>
                         </Grid>
                     </Grid>
@@ -74,9 +85,5 @@ Report.propTypes = {
     channelName: PropTypes.string.isRequired,
     classes: PropTypes.object.isRequired,
 };
-
-function convertHourlyStats(moiraStats) {
-    return Object.keys(moiraStats).map(item => ({ hour: item, count: moiraStats[item]}))
-}
 
 export default withStyles(styles, { withTheme: true })(Report);

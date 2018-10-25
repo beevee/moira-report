@@ -34,7 +34,8 @@ app.get('/:channelName', (request, response) => {
     const stats = {
         moira: {
             total: 0,
-            byHour: {}
+            byHour: {},
+            byReaction: {},
         },
         others: {
             total: 0
@@ -56,7 +57,21 @@ app.get('/:channelName', (request, response) => {
             if (msg.bot_id === moiraBotId) {
                 stats.moira.total++;
                 const ts = moment(Math.floor(1000 * msg.ts));
-                stats.moira.byHour[ts.hours()] += 1
+                stats.moira.byHour[ts.hours()] += 1;
+                if (!msg.reactions && !msg.replies) {
+                    stats.moira.byReaction['nothing'] = stats.moira.byReaction['nothing'] || 0;
+                    stats.moira.byReaction['nothing'] += 1;
+                }
+                if (msg.reactions) {
+                    msg.reactions.forEach(reaction => {
+                        stats.moira.byReaction[reaction.name] = stats.moira.byReaction[reaction.name] || 0;
+                        stats.moira.byReaction[reaction.name] += 1;
+                    })
+                }
+                if (msg.replies) {
+                    stats.moira.byReaction['thread'] = stats.moira.byReaction['thread'] || 0;
+                    stats.moira.byReaction['thread'] += 1;
+                }
             } else {
                 stats.others.total++
             }

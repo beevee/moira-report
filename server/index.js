@@ -74,8 +74,9 @@ app.get('/:channelName', (request, response) => {
                 }
                 if (msg.reactions) {
                     msg.reactions.forEach(reaction => {
-                        stats.moira.byReaction[reaction.name] = stats.moira.byReaction[reaction.name] || 0;
-                        stats.moira.byReaction[reaction.name] += 1;
+                        const reactionName = ':'+reaction.name+':';
+                        stats.moira.byReaction[reactionName] = stats.moira.byReaction[reactionName] || 0;
+                        stats.moira.byReaction[reactionName] += 1;
                     })
                 }
                 if (msg.replies) {

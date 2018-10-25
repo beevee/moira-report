@@ -60,7 +60,7 @@ class Report extends React.Component {
                             <Paper className={classes.paper}>
                                 <Typography paragraph>
                                     Этот график показывает, сколько сообщений пришлось на каждый час. Время местное (там, где запущен moira-report).
-                                    В идеальном чате нет сообщений ночью. От каждого такого сообщения просыпается дежурный.
+                                    В идеальном чате нет сообщений ночью, ведь от каждого такого сообщения просыпается дежурный.
                                 </Typography>
                                 <HourlyGraph data={stats.moira.byHour}/>
                             </Paper>
@@ -70,7 +70,8 @@ class Report extends React.Component {
                             <Paper className={classes.paper}>
                                 <Typography paragraph>
                                     Здесь учитывается реакция на сообщение. Это может быть ответ в тред, смайлик или отсутствие реакции (nothing).
-                                    Если в команде есть договоренности относительно правил реагирования на алерты, этот график поможет найти отклонения.
+                                    Используйте смайлики, чтобы классифицировать сообщения: например, :heavy_check_mark: может означать, что уведомление
+                                    было по делу, и дежурный исправил проблему.
                                 </Typography>
                                 <ReactionsGraph data={stats.moira.byReaction}/>
                             </Paper>
@@ -79,7 +80,9 @@ class Report extends React.Component {
                         <Grid item xs={6}>
                             <Paper className={classes.paper}>
                                 <Typography paragraph>
-                                    Топ-10 триггеров по количеству сообщений.
+                                    Топ-10 триггеров по количеству сообщений. Если некоторые триггеры шумят сильнее других, нужно их
+                                    отключить или починить. Еще помогает включить тротлинг: тогда отдельных сообщений будет меньше,
+                                    каждое из них будет содержать несколько переходов состояния.
                                 </Typography>
                                 <TopTriggers data={stats.moira.byTrigger}/>
                             </Paper>

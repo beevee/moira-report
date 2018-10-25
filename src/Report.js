@@ -3,6 +3,7 @@ import HourlyGraph from "./graphs/Hourly";
 import ReactionsGraph from "./graphs/Reactions";
 import PropTypes from "prop-types";
 import React from "react";
+import TopTriggers from "./graphs/TopTriggers";
 
 const styles = theme => ({
     toolbar: theme.mixins.toolbar,
@@ -72,6 +73,15 @@ class Report extends React.Component {
                                     Если в команде есть договоренности относительно правил реагирования на алерты, этот график поможет найти отклонения.
                                 </Typography>
                                 <ReactionsGraph data={stats.moira.byReaction}/>
+                            </Paper>
+                        </Grid>
+
+                        <Grid item xs={6}>
+                            <Paper className={classes.paper}>
+                                <Typography paragraph>
+                                    Топ-10 триггеров по количеству сообщений.
+                                </Typography>
+                                <TopTriggers data={stats.moira.byTrigger}/>
                             </Paper>
                         </Grid>
                     </Grid>

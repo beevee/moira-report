@@ -36,6 +36,7 @@ app.get('/:channelName', (request, response) => {
             total: 0,
             byHour: {},
             byReaction: {},
+            byTrigger: {},
         },
         others: {
             total: 0
@@ -53,9 +54,16 @@ app.get('/:channelName', (request, response) => {
         web.conversations.history({ channel: conversationId, limit: 1000, oldest: moment().subtract(30, 'days').unix() })
         .then(res => {
             console.log(`Got ${res.messages.length} messages`);
+            const titleRegexp = /\*(\w+)\* \[.+] <(.+)\|(.+)>/;
             res.messages.forEach(msg => {
             if (msg.bot_id === moiraBotId) {
                 stats.moira.total++;
+
+                const titleMatch = titleRegexp.exec(msg.text);
+                const level = titleMatch ? titleMatch[1].toLowerCase() : 'unknown';
+                const link = titleMatch ? titleMatch[2] : '';
+                const name = titleMatch ? titleMatch[3] : 'unknown';
+
                 const ts = moment(Math.floor(1000 * msg.ts));
                 stats.moira.byHour[ts.hours()][level] = stats.moira.byHour[ts.hours()][level] || 0;
                 stats.moira.byHour[ts.hours()][level] += 1;
@@ -74,6 +82,9 @@ app.get('/:channelName', (request, response) => {
                     stats.moira.byReaction['thread'] = stats.moira.byReaction['thread'] || 0;
                     stats.moira.byReaction['thread'] += 1;
                 }
+
+                stats.moira.byTrigger[name] = stats.moira.byTrigger[name] || {'count': 0, 'link': link};
+                stats.moira.byTrigger[name].count += 1;
             } else {
                 stats.others.total++
             }

@@ -23,14 +23,15 @@ app.use(function(req, res, next) {
     next();
 });
 
-app.get('/', (request, response) => {
+app.get('/', (request, response, next) => {
     web.conversations.list({ types: "public_channel,private_channel" })
     .then(results => {
         response.json(results.channels.filter(channel => channel.is_member).map(channel => channel.name));
     })
+    .catch(next)
 });
 
-app.get('/:channelName', (request, response) => {
+app.get('/:channelName', (request, response, next) => {
     const stats = {
         moira: {
             total: 0,
@@ -46,7 +47,7 @@ app.get('/:channelName', (request, response) => {
     web.conversations.list({ types: "public_channel,private_channel" })
     .then(results => {
         const conversationId = results.channels.filter(ch => ch.is_member && ch.name === request.params.channelName)[0].id;
-    
+
         web.conversations.history({
             channel: conversationId,
             limit: 1000,
@@ -97,8 +98,12 @@ app.get('/:channelName', (request, response) => {
             });
             response.json(stats)
         })
-        .catch(console.error)
+        .catch(next)
     })
-    .catch(console.error)
+    .catch(next)
 });
 
+app.use(function(err, req, res, next) {
+    console.error(err.stack);
+    res.status(500).json({ error: err.message });
+});

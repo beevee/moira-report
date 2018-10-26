@@ -14,7 +14,7 @@ export default class Hourly extends React.Component {
                         <ScatterChart fontFamily="Roboto" margin={{top: 10, right: 0, bottom: 0, left: 0}}>
                             <XAxis type="category" dataKey="hour" interval={0} tick={{ fontSize: dayKey === lastDayKey ? 15 : 0 }} tickLine={false} axisLine={{ strokeWidth: "0.2" }} />
                             <YAxis type="number" dataKey="day" name={dayKey} height={10} width={60} tick={false} tickLine={false} axisLine={false} label={{ value: dayKey, position: 'insideRight' }}/>
-                            <ZAxis type="number" dataKey="count" range={[0,450]} domain={domain} />
+                            <ZAxis type="number" dataKey="count" range={[0,420]} domain={domain} />
                             <Tooltip cursor={{strokeDasharray: '3 3'}} wrapperStyle={{ zIndex: 100 }} />
                             <Scatter data={data} fill="#3f51b5">
                                 {

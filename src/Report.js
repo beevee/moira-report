@@ -52,7 +52,7 @@ class Report extends React.Component {
                         <Grid item xs={12}>
                             <Typography variant="subheading">
                                 Мы анализируем историю канала за неделю, но не больше 1000 сообщений.
-                                В этот отчет попало {total} сообщений, из них {stats.moira.total} — от Мойры.
+                                В этот отчет попало {total} {declOfNum(total, ['сообщение', 'сообщения', 'сообщений'])}, из них {stats.moira.total} — от Мойры.
                             </Typography>
                         </Grid>
 
@@ -98,5 +98,10 @@ Report.propTypes = {
     channelName: PropTypes.string.isRequired,
     classes: PropTypes.object.isRequired,
 };
+
+function declOfNum(number, titles) {
+    const cases = [2, 0, 1, 1, 1, 2];
+    return titles[ (number%100>4 && number%100<20)? 2 : cases[(number%10<5)?number%10:5] ];
+}
 
 export default withStyles(styles, { withTheme: true })(Report);

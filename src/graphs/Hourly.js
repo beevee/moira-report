@@ -1,22 +1,25 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip} from "recharts";
+import {ScatterChart, XAxis, YAxis, ZAxis, Scatter, ResponsiveContainer, Tooltip} from "recharts";
 
 export default class Hourly extends React.Component {
     render () {
+        const domain = getDomain(this.props.data);
+        const lastDayKey = Object.keys(this.props.data)[Object.keys(this.props.data).length-1];
         return (
-            <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={convertHourlyStats(this.props.data)} fontFamily="Roboto">
-                    <CartesianGrid strokeDasharray="3 3"/>
-                    <XAxis dataKey="hour"/>
-                    <YAxis/>
-                    <Tooltip/>
-                    <Bar dataKey="ok" stackId="a" fill="rgb(0, 191, 165)"/>
-                    <Bar dataKey="warn" stackId="a" fill="rgb(255, 193, 7)"/>
-                    <Bar dataKey="error" stackId="a" fill="rgb(255, 87, 34)"/>
-                    <Bar dataKey="nodata" stackId="a" fill="rgb(158, 158, 158)"/>
-                </BarChart>
-            </ResponsiveContainer>
+            <div>
+                {Object.keys(this.props.data).map(dayKey => (
+                    <ResponsiveContainer width="100%" height={60} key={dayKey}>
+                        <ScatterChart fontFamily="Roboto" margin={{top: 10, right: 0, bottom: 0, left: 0}}>
+                            <XAxis type="category" dataKey="hour" interval={0} tick={{ fontSize: dayKey === lastDayKey ? 15 : 0 }} tickLine={{ transform: 'translate(0, -6)' }} />
+                            <YAxis type="number" dataKey="day" name={dayKey} height={10} width={60} tick={false} tickLine={false} axisLine={false} label={{ value: dayKey, position: 'insideRight' }}/>
+                            <ZAxis type="number" dataKey="count" range={[0,200]} domain={domain} />
+                            <Tooltip cursor={{strokeDasharray: '3 3'}} wrapperStyle={{ zIndex: 100 }} />
+                            <Scatter data={convertHourlyStats(this.props.data[dayKey], dayKey)} fill="#3f51b5"/>
+                        </ScatterChart>
+                    </ResponsiveContainer>
+                ))}
+            </div>
         )
     }
 }
@@ -25,12 +28,25 @@ Hourly.propTypes = {
     data: PropTypes.object
 };
 
-function convertHourlyStats(moiraStats) {
-    return Object.keys(moiraStats).map(item => ({
-        hour: item,
-        ok: moiraStats[item].ok || 0,
-        warn: moiraStats[item].warn || 0,
-        error: moiraStats[item].error || 0,
-        nodata: moiraStats[item].nodata || 0
-    }))
+function convertHourlyStats(moiraStats, dayKey) {
+    let flatStats = [];
+        Object.keys(moiraStats).map(hourKey => {
+            flatStats.push({
+                'day': dayKey,
+                'hour': hourKey,
+                'count': moiraStats[hourKey],
+            })
+    });
+    return flatStats;
+}
+
+function getDomain(moiraStats) {
+    let maxCount = 0;
+    Object.keys(moiraStats).map(dayKey =>
+        Object.keys(moiraStats[dayKey]).map(hourKey => {
+            if (maxCount < moiraStats[dayKey][hourKey])
+                maxCount = moiraStats[dayKey][hourKey]
+        }));
+    console.log(maxCount);
+    return [0, maxCount]
 }

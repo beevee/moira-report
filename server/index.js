@@ -43,15 +43,16 @@ app.get('/:channelName', (request, response) => {
         }
     };
 
-    for (let i=0; i<24; i++) {
-        stats.moira.byHour[i] = {}
-    }
-
     web.conversations.list({ types: "public_channel,private_channel" })
     .then(results => {
         const conversationId = results.channels.filter(ch => ch.is_member && ch.name === request.params.channelName)[0].id;
     
-        web.conversations.history({ channel: conversationId, limit: 1000, oldest: moment().subtract(30, 'days').unix() })
+        web.conversations.history({
+            channel: conversationId,
+            limit: 1000,
+            oldest: moment().subtract(7, 'days').unix(),
+            latest: moment().unix(),
+        })
         .then(res => {
             console.log(`Got ${res.messages.length} messages`);
             const titleRegexp = /\*(\w+)\* \[.+] <(.+)\|(.+)>/;
@@ -60,13 +61,17 @@ app.get('/:channelName', (request, response) => {
                 stats.moira.total++;
 
                 const titleMatch = titleRegexp.exec(msg.text);
-                const level = titleMatch ? titleMatch[1].toLowerCase() : 'unknown';
+                // const level = titleMatch ? titleMatch[1].toLowerCase() : 'unknown';
                 const link = titleMatch ? titleMatch[2] : '';
                 const name = titleMatch ? titleMatch[3] : 'unknown';
 
                 const ts = moment(Math.floor(1000 * msg.ts));
-                stats.moira.byHour[ts.hours()][level] = stats.moira.byHour[ts.hours()][level] || 0;
-                stats.moira.byHour[ts.hours()][level] += 1;
+                const dayKey = ts.format('DD.MM');
+                stats.moira.byHour[dayKey] = stats.moira.byHour[dayKey] || {};
+                for (let i=0; i<24; i++) {
+                    stats.moira.byHour[dayKey][i] = stats.moira.byHour[dayKey][i] || 0;
+                }
+                stats.moira.byHour[dayKey][ts.hours()] += 1;
 
                 if (!msg.reactions && !msg.replies) {
                     stats.moira.byReaction['nothing'] = stats.moira.byReaction['nothing'] || 0;

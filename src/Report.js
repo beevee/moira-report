@@ -51,12 +51,12 @@ class Report extends React.Component {
                     <Grid container spacing={24}>
                         <Grid item xs={12}>
                             <Typography variant="subheading">
-                                Мы анализируем историю канала за 30 дней, но не больше 1000 сообщений.
+                                Мы анализируем историю канала за неделю, но не больше 1000 сообщений.
                                 В этот отчет попало {total} сообщений, из них {stats.moira.total} — от Мойры.
                             </Typography>
                         </Grid>
 
-                        <Grid item xs={6}>
+                        <Grid item xs={12}>
                             <Paper className={classes.paper}>
                                 <Typography paragraph>
                                     Этот график показывает, сколько сообщений пришлось на каждый час. Время местное (там, где запущен moira-report).

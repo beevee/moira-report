@@ -17,13 +17,7 @@ app.listen(port, (err) => {
     console.log("started")
 });
 
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
-
-app.get('/', (request, response, next) => {
+app.get('/api', (request, response, next) => {
     web.conversations.list({ types: "public_channel,private_channel" })
     .then(results => {
         response.json(results.channels.filter(channel => channel.is_member).map(channel => channel.name));
@@ -31,7 +25,7 @@ app.get('/', (request, response, next) => {
     .catch(next)
 });
 
-app.get('/:channelName', (request, response, next) => {
+app.get('/api/:channelName', (request, response, next) => {
     const stats = {
         moira: {
             total: 0,

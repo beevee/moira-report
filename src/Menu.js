@@ -27,7 +27,7 @@ class Menu extends React.Component {
     }
 
     componentDidMount() {
-        fetch(`//${window.location.hostname}:9090/`)
+        fetch(`/api`)
             .then(response => response.json())
             .then(responseJson => {
                 this.setState({channels: responseJson})

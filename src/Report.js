@@ -28,7 +28,7 @@ class Report extends React.Component {
         const { channelName } = this.props;
         if (this.state.stats[channelName] !== undefined) return;
 
-        fetch(`//localhost:9090/${channelName}`)
+        fetch(`//${window.location.hostname}:9090/${channelName}`)
             .then(response => response.json())
             .then(responseJson => {this.setState({stats:{
                 ...this.state.stats,

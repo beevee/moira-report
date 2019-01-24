@@ -1,4 +1,5 @@
 const moiraBotId = process.env.MOIRA_REPORT_BOT_ID;
+let moiraBotUserId = "";
 
 const { WebClient } = require('@slack/client');
 const web = new WebClient(process.env.MOIRA_REPORT_SLACK_TOKEN);
@@ -14,7 +15,17 @@ app.listen(port, (err) => {
         console.error(err)
     }
 
-    console.log("started")
+    console.log("started, getting moiraBotUserId from api");
+
+    web.bots.info({bot: moiraBotId})
+        .then(res => {
+            if (res.ok) {
+                moiraBotUserId = res.bot.user_id;
+                console.log(`moiraBotUserId is ${moiraBotUserId}`);
+            } else {
+                console.log("bot by given moiraBotId not found'");
+            }
+        });
 });
 
 app.get('/api', (request, response, next) => {
@@ -68,7 +79,9 @@ app.get('/api/:channelName', (request, response, next) => {
                 }
                 stats.moira.byHour[dayKey][ts.hours()] += 1;
 
-                if (!msg.reactions && !msg.replies) {
+                const hasReplies = msg.replies && msg.replies.some(reply => reply.user !== moiraBotUserId);
+
+                if (!msg.reactions && !hasReplies) {
                     stats.moira.byReaction['nothing'] = stats.moira.byReaction['nothing'] || 0;
                     stats.moira.byReaction['nothing'] += 1;
                 }
@@ -79,7 +92,7 @@ app.get('/api/:channelName', (request, response, next) => {
                         stats.moira.byReaction[reactionName] += 1;
                     })
                 }
-                if (msg.replies) {
+                if (hasReplies) {
                     stats.moira.byReaction['thread'] = stats.moira.byReaction['thread'] || 0;
                     stats.moira.byReaction['thread'] += 1;
                 }

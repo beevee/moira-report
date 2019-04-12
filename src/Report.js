@@ -66,7 +66,7 @@ class Report extends React.Component {
                             </Paper>
                         </Grid>
 
-                        <Grid item xs={6}>
+                        <Grid item xs={4}>
                             <Paper className={classes.paper}>
                                 <Typography paragraph>
                                     Здесь учитывается реакция на сообщение. Это может быть ответ в тред, смайлик или отсутствие реакции (nothing).
@@ -77,7 +77,7 @@ class Report extends React.Component {
                             </Paper>
                         </Grid>
 
-                        <Grid item xs={6}>
+                        <Grid item xs={8}>
                             <Paper className={classes.paper}>
                                 <Typography paragraph>
                                     Топ-10 триггеров по количеству сообщений. Если некоторые триггеры шумят сильнее других, нужно их

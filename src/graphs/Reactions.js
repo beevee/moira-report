@@ -8,6 +8,7 @@ import {
     PolarRadiusAxis,
     ResponsiveContainer
 } from "recharts";
+import Emoji from "node-emoji";
 
 export default class Reactions extends React.Component {
     render () {
@@ -29,5 +30,5 @@ Reactions.propTypes = {
 };
 
 function convertReactionStats(moiraStats) {
-    return Object.keys(moiraStats).map(item => ({name: item, count: moiraStats[item]})).sort((a, b) => a.count > b.count ? -1 : 1)
+    return Object.keys(moiraStats).map(item => ({name: Emoji.get(item), count: moiraStats[item]})).sort((a, b) => a.count > b.count ? -1 : 1)
 }

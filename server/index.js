@@ -74,6 +74,8 @@ app.get('/api/:channelName', (request, response, next) => {
                 const ts = moment(Math.floor(1000 * msg.ts));
                 const dayKey = ts.format('DD.MM');
                 stats.moira.byHour[dayKey] = stats.moira.byHour[dayKey] || {};
+                stats.moira.byTrigger[name] = stats.moira.byTrigger[name] || {'count': 0, 'link': link, 'reactions': {}};
+
                 for (let i=0; i<24; i++) {
                     stats.moira.byHour[dayKey][i] = stats.moira.byHour[dayKey][i] || 0;
                 }
@@ -84,21 +86,26 @@ app.get('/api/:channelName', (request, response, next) => {
                 if (!msg.reactions && !hasReplies) {
                     stats.moira.byReaction['nothing'] = stats.moira.byReaction['nothing'] || 0;
                     stats.moira.byReaction['nothing'] += 1;
+                    stats.moira.byTrigger[name]['reactions']['nothing'] = stats.moira.byTrigger[name]['reactions']['nothing'] || 0;
+                    stats.moira.byTrigger[name]['reactions']['nothing'] += 1;
                 }
                 if (msg.reactions) {
                     msg.reactions.forEach(reaction => {
                         const reactionName = ':'+reaction.name+':';
                         stats.moira.byReaction[reactionName] = stats.moira.byReaction[reactionName] || 0;
                         stats.moira.byReaction[reactionName] += 1;
+                        stats.moira.byTrigger[name]['reactions'][reactionName] = stats.moira.byTrigger[name]['reactions'][reactionName] || 0;
+                        stats.moira.byTrigger[name]['reactions'][reactionName] += 1;
                     })
                 }
                 if (hasReplies) {
                     stats.moira.byReaction['thread'] = stats.moira.byReaction['thread'] || 0;
                     stats.moira.byReaction['thread'] += 1;
+                    stats.moira.byTrigger[name]['reactions']['thread'] = stats.moira.byTrigger[name]['reactions']['thread'] || 0;
+                    stats.moira.byTrigger[name]['reactions']['thread'] += 1;
                 }
 
-                stats.moira.byTrigger[name] = stats.moira.byTrigger[name] || {'count': 0, 'link': link};
-                stats.moira.byTrigger[name].count += 1;
+                stats.moira.byTrigger[name]['count'] += 1;
             } else {
                 stats.others.total++
             }

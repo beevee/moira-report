@@ -61,15 +61,15 @@ app.get('/api/:channelName', (request, response, next) => {
         })
         .then(res => {
             console.log(`Got ${res.messages.length} messages`);
-            const titleRegexp = /\*(\w+)\* (\[.+])? <(.+)\|(.+)>/;
+            const titleRegexp = /\*(\w+)\* <(.+)\|(.+)>( \[.+])?/;
             res.messages.forEach(msg => {
             if (msg.bot_id === moiraBotId) {
                 stats.moira.total++;
 
                 const titleMatch = titleRegexp.exec(msg.text);
                 // const level = titleMatch ? titleMatch[1].toLowerCase() : 'unknown';
-                const link = titleMatch ? titleMatch[3] : '';
-                const name = titleMatch ? titleMatch[4] : 'unknown';
+                const link = titleMatch ? titleMatch[2] : '';
+                const name = titleMatch ? titleMatch[3] : 'unknown';
 
                 const ts = moment(Math.floor(1000 * msg.ts));
                 const dayKey = ts.format('DD.MM');
